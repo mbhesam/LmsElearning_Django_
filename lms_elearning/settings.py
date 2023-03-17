@@ -45,8 +45,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'users',
     'education_course',
+    'curriculum',
+    'crispy_bootstrap4',
+    'crispy_forms',
 ]
-
+CRISPY_TEMPLATE_PACK='bootstrap4'
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -58,7 +61,7 @@ MIDDLEWARE = [
 ]
 AUTHENTICATION_BACKENDS = [
 #    'django.contrib.auth.backends.ModelBackend', # This is the default that allows us to log in via username
-    'users.authentication.EmailAuthBackend'
+    'users.authentication.EmailBackend'
 ]
 
 
@@ -144,7 +147,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = 'static/'
-
+STATIC_DIR= os.path.join(BASE_DIR,"static")
+STATICFILES_DIRS = [
+    STATIC_DIR,
+]
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 

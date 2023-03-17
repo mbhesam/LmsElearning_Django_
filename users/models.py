@@ -2,24 +2,6 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.auth.models import BaseUserManager as BUM
 from django.contrib.auth.models import PermissionsMixin
-import os
-from uuid import uuid4
-from django.utils.deconstruct import deconstructible
-
-@deconstructible
-class PathAndRename(object):
-
-    def __init__(self, sub_path):
-        self.path = sub_path
-
-    def __call__(self, instance, filename):
-        ext = filename.split('.')[-1]
-        # set filename as random string
-        filename = '{}.{}'.format(uuid4().hex, ext)
-        # return the whole path to the file
-        return os.path.join(self.path, filename)
-
-path_and_rename = PathAndRename("../media")
 
 class BaseUserManager(BUM):
     def create_user(self,email, password=None):
@@ -68,7 +50,7 @@ class Profile(AbstractBaseUser):
                               unique=True)
     password = models.CharField(max_length=100)
     grade_class = models.CharField(max_length=150)
-    picture = models.ImageField(upload_to=path_and_rename,verbose_name="picture",blank=True) # upload_to=(instance,filename)
+    picture = models.ImageField(upload_to="user",verbose_name="picture",default='Lionel-Messi-11.jpg') # upload_to=(instance,filename)
     type_user = models.CharField(max_length=10,choices=type_choices,default='student')
     objects = BaseUserManager()
     USERNAME_FIELD = "email"
@@ -77,7 +59,7 @@ class Profile(AbstractBaseUser):
 
 
     def __str__(self):
-        return self.firstname+" "+self.lastnames
+        return self.lastname
 
     def is_staff(self):
         return self.type_user

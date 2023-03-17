@@ -1,18 +1,18 @@
 from django.shortcuts import render
 from .forms import ProfileUser
 from  django.http import HttpResponse ,HttpResponseRedirect
-from .authentication import EmailAuthBackend
+from .authentication import EmailBackend
 from django.contrib.auth import login , logout
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.core.exceptions import ValidationError
 
 def index(request):
-    return HttpResponse("this is home page")
+    return render(request,'base.html',{"user":request.user})
 
 def register(request):
     registered = False
     if request.method=='POST':
-        pu = ProfileUser(data=request.POST)
+        pu = ProfileUser(request.POST,request.FILES)
         if pu.is_valid():
             pu.save().save()
             registered=True
@@ -30,7 +30,7 @@ def userlogin(request):
     if request.method=='POST':
         email = request.POST.get('email')
         password = request.POST.get('password')
-        user = EmailAuthBackend.authenticate(email=email,password=password)
+        user = EmailBackend.authenticate(request=request,username=email,password=password)
         if user != None:
             login(request,user)
             return  HttpResponseRedirect(reverse('index'))
@@ -41,7 +41,8 @@ def userlogin(request):
 
 def userlogout(request):
     if request.user.is_authenticated:
-       logout(request)
-       return HttpResponseRedirect(reverse('base.html'))
-
+        logout(request)
+        return HttpResponseRedirect(reverse_lazy('index'))
+    else:
+        return HttpResponse('you are not login')
 
