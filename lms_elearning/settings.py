@@ -14,6 +14,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 #mongoengine.connect(db="lmsdb", host="192.168.56.116:27017", username="root", password="hesam")
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -30,7 +31,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
+CSRF_TRUSTED_ORIGINS = [
+    'http://*'
+]
 # Application definition
 
 INSTALLED_APPS = [
@@ -42,8 +45,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'users',
     'education_course',
+    'curriculum',
+    'crispy_bootstrap4',
+    'crispy_forms',
 ]
-
+CRISPY_TEMPLATE_PACK='bootstrap4'
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -53,6 +59,11 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+AUTHENTICATION_BACKENDS = [
+#    'django.contrib.auth.backends.ModelBackend', # This is the default that allows us to log in via username
+    'users.authentication.EmailBackend'
+]
+
 
 ROOT_URLCONF = 'lms_elearning.urls'
 
@@ -84,7 +95,7 @@ DATABASES = {
            'ENGINE': 'djongo',
            'NAME': 'lmsdb',
            "CLIENT": {
-               "host": "192.168.56.116",
+               "host": "192.168.56.120",
                "port": 27017,
                "username": "root",
                "password": "hesam",
@@ -96,6 +107,10 @@ DATABASES = {
 }
    }
 
+MEDIA_ROOT=os.path.join(BASE_DIR,'media')
+MEDIA_URL='/media/'
+
+AUTH_USER_MODEL = 'users.Profile'
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -132,7 +147,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = 'static/'
-
+STATIC_DIR= os.path.join(BASE_DIR,"static")
+STATICFILES_DIRS = [
+    STATIC_DIR,
+]
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
